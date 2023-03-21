@@ -13,7 +13,6 @@ CREATE Table tblusers(
 )
 -----------------------------------------------------------------------------------------
 
-
 CREATE Table tblLoginHistory(
     SN BIGINT PRIMARY KEY Identity(1,1),
     userID BIGINT REFERENCES tblusers(SN),
@@ -69,3 +68,7 @@ END
 -----------------------------------------------------------------------------------------
 
 exec ProcLogIn 'ganesh','gan123'
+
+
+print @@SERVERNAME
+
