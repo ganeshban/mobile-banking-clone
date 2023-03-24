@@ -1,4 +1,3 @@
-from core.core import DB_Table
 from pydantic import BaseModel
 
 
@@ -9,32 +8,16 @@ class Users(BaseModel):
     email:str=''
     phone:str=''
     fullname:str=''
-    isactive:str=''
+    isactive:int=1
 
-class User(DB_Table, Users):
-    __tblname='tblusers'
-
-    def __init__(self,userID, username, userpassword, email, phone,fullname,isactive):
-        super().__init__(self.__tblname)
-        self.userid=userID
-        self.username=username
-        self.userpassword=userpassword
-        self.email=email
-        self.phone=phone
-        self.fullname=fullname
-        self.isactive=isactive
-        
-
-    def from_DB(self, *args):
-        '''Pass the Condition as an argument
-        
-        '''
-        return 'this function will return users from data base'
-
-    def Save_to_database(self):
-        if self.__tblname:
-            print('this will have db objects')
-    
-        return 'this function will return users from data base'
-
-
+    def from_list(lst:str):
+        if len(lst)==1:
+            l=lst[0]
+            return Users(userid=l[0],username=l[1],userpassword=l[2],email=l[3],phone=l[4],fullname=l[5],isactive=l[6])
+        else:
+            list=[]
+            for i in lst:
+                l=i
+                data=Users(userid=l[0],username=l[1],userpassword=l[2],email=l[3],phone=l[4],fullname=l[5],isactive=l[6])
+                list.append(data)
+            return list

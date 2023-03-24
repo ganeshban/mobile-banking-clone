@@ -21,7 +21,7 @@ class Members(BaseModel):
             list=[]
             for i in lst:
                 l=i
-                mem=Members(sn=l[0],memid=l[1],fname=l[2],mname=l[3],lname=l[4],dob=l[5],doa=l[6],address=l[7],active=l[8])
-                list.append(mem)
+                data=Members(sn=l[0],memid=l[1],fname=l[2],mname=l[3],lname=l[4],dob=l[5],doa=l[6],address=l[7],active=l[8])
+                list.append(data)
             return list
             

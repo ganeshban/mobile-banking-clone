@@ -1,41 +1,56 @@
 from fastapi import APIRouter, Path, Query,Body
 
 from model.user import Users
-from core.core import json_data
-myUsers=[]
+from core.core import DB_Table, json_data
+
+table=DB_Table('tblusers','userid')
 r=APIRouter(prefix='/users',tags=['User'])
 
 
 
 @r.get('/login')
 def login(
-username:str=Query(default=None, title='User Name',description='Enter a User Name for login',min_length=5),
-password:str=Query(default=None, title='Password',description='Enter a Password for login',min_length=5)
-):
-    return json_data({'username':username,'password':password,'token_id':'iadhfiadufhiadfhiahda'})
+username:str=Query(default='', title='User Name',description='Enter a User Name for login',min_length=5),
+password:str=Query(default='', title='Password',description='Enter a Password for login',min_length=5),
+auth_code:str=Query(default=None)):
+    # return json_data({'username':username,'password':password,'token_id':'iadhfiadufhiadfhiahda'})
+
+    where=f" where username = '{username}' and userpassword = '{password}' "
+    result,_=table.get_all(where)
+    if type(result) is list and len(result)>0:
+        return json_data(Users.from_list(result),meta=_)
+    return json_data('either username or password is wrong.',meta=_)
 
 
 @r.get('/{userid}')
 def get_user(
 userid:int=Path(default=None, title='User id',description='Enter a User ID On URL to get user information',gt=0),
 ):
-    return json_data({'username':userid})
-
-
+    res,metadata = table.get_one(userid)
+    return json_data(Users.from_list(res),meta=metadata)
 
 @r.post('/create')
 def create_user(user:Users):
-    return json_data( user)
+    res,_=table.save_to_database(user.dict())
+    return json_data(res,meta=_)
 
 
 
 @r.delete('/delete/{user}')
 def delete_user(user:int=Path(default=None,title='UserID', description='Enter a Userid to delete',gt=0)):
-    return user
+    res,mdata=table.delete_from_database(user)
+    data=mdata.get('msg',f'user having id {user} is deleted.')
+    mdata['msg']=data
+    return json_data( res,meta=mdata)
 
 @r.put('/update/{userid}')
-def update_user(userid:int=Path(title='UserID',description='Pass the user id on URL to update'), data:Users=Body(title='Update user',description='Pass the required field to update')):
-    myData={'userid':userid,'updates':data}
-    return json_data(myData)
+def update_user(
+userid:int=Path(title='UserID',description='Pass the user id on URL to update'), 
+source:Users=Body(title='Update user',description='Pass the required field to update')
+):
+    res,mdata=table.update_to_database(source.dict(), userid)
+    data=mdata.get('msg','user updated successfully')
+    mdata['msg']=data
+    return json_data(res, meta=mdata)
 
 

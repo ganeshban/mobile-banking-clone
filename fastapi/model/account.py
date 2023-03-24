@@ -6,9 +6,17 @@ class Account(BaseModel):
     AccountNumber:str=''
     AccountName:str=''
     DateOpen:str=''
-    user:int=0
+    userId:int=0
 
 
-    def from_list(l:list):
-        return Account(l[0],l[1],l[2],l[3],l[4])
-    
+    def from_list(lst:str):
+        if len(lst)==1:
+            l=lst[0]
+            return Account(AccountID=l[0],AccountName=l[1],AccountNumber=l[2],DateOpen=l[3],user=l[4])
+        else:
+            list=[]
+            for i in lst:
+                l=i
+                data=Account(AccountID=l[0],AccountName=l[1],AccountNumber=l[2],DateOpen=l[3],user=l[4])
+                list.append(data)
+            return list
