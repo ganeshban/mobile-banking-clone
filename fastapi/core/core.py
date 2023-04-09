@@ -80,7 +80,7 @@ class DB_Table():
         if qry:
             data = run_query(qry)
         data = run_query(f'select * from {self.table_name } {condition}')
-        return return_with_meta(data,f'record not found with {id}')
+        return return_with_meta(data,f'record not found')
 
     def get_one(self, id):
         data=run_query(f'select * from {self.table_name} where {self.unique_filed} = {id}')

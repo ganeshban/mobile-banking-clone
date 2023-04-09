@@ -7,21 +7,6 @@ table=DB_Table('tblusers','userid')
 r=APIRouter(prefix='/users',tags=['User'])
 
 
-
-@r.get('/login')
-def login(
-username:str=Query(default='', title='User Name',description='Enter a User Name for login',min_length=5),
-password:str=Query(default='', title='Password',description='Enter a Password for login',min_length=5),
-auth_code:str=Query(default=None)):
-    # return json_data({'username':username,'password':password,'token_id':'iadhfiadufhiadfhiahda'})
-
-    where=f" where username = '{username}' and userpassword = '{password}' "
-    result,_=table.get_all(where)
-    if type(result) is list and len(result)>0:
-        return json_data(Users.from_list(result),meta=_)
-    return json_data('either username or password is wrong.',meta=_)
-
-
 @r.get('/{userid}')
 def get_user(
 userid:int=Path(default=None, title='User id',description='Enter a User ID On URL to get user information',gt=0),
