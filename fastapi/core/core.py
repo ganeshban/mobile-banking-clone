@@ -1,6 +1,12 @@
-from  database.dbhelper import run_query
+from fastapi.exceptions import HTTPException
 
-def json_data(obj, success=True, error=None, msg='', title='',code=1, rec_cnt=0, access_token='', meta:dict={}):
+from  .database import run_query
+
+
+def not_found_error(msg='Record not found',code=404, meta={}):
+    return json_data(msg, code=code,meta=meta)
+
+def json_data(obj, success=True, error=None, msg='', title='',code=000, rec_cnt=0, access_token='', meta:dict={}):
     ret={}
     _is_success=success
     _title=None
@@ -65,7 +71,11 @@ def json_data(obj, success=True, error=None, msg='', title='',code=1, rec_cnt=0,
     ret['access_token']=_access_token
     ret['data']=obj
 
-    return ret
+    
+    _my_code=200
+    if _code:
+        _my_code=_code
+    raise HTTPException(_my_code,ret)
 
 
 class DB_Table():
@@ -89,7 +99,7 @@ class DB_Table():
 
     def delete_from_database(self,id):
         data=run_query(f'delete from {self.table_name} where {self.unique_filed} = {id}')
-        return return_with_meta(data,'Record not deleted. Deletion faild.')
+        return return_with_meta(data,'Record not deleted. Deletion faild.','d')
 
 
 
@@ -102,7 +112,7 @@ class DB_Table():
                 values+=f'{val}, '
         values=values.removesuffix(', ')
         fullSQL=f'Insert into {self.table_name} values ( {values} ) '
-        return return_with_meta(run_query(fullSQL),'failed to save data to database')
+        return return_with_meta(run_query(fullSQL),'failed to save data to database','c')
 
 
     def update_to_database(self,data:dict, uniqueVal=None):
@@ -120,17 +130,39 @@ class DB_Table():
                 values+=f' {key} = {val}, '
         values=values.removesuffix(', ')
         fullSQL=f'Update {self.table_name} set {values} where {self.unique_filed} = {unique_val} '
-        return return_with_meta(run_query(fullSQL),'error occered while updation')
+        return return_with_meta(run_query(fullSQL),'error occered while updation','u')
 
 
     def custom_query(self, query:str):
-        return return_with_meta(run_query(query))
+        return return_with_meta(run_query(query),'something went wrong check your Query again.','n')
 
 
-def return_with_meta(source,errorMsg=''):
+def return_with_meta(source,errorMsg='',CRUD='r'):
     data,row=source
     if type(data)==str or (len(data)==0 and row==0):
         meta={'rec_cnt':-1,'msg':errorMsg,'title':'error','error':1}
     else:
         meta={'rec_cnt':len(data)}
+    if CRUD=='c':
+        if row>0:
+            meta['code']=201
+        else:
+            meta['code']=200
+    elif CRUD=='r':
+        if len(data)>0:
+            meta['code']=200
+        else:
+            meta['code']=404
+    elif CRUD=='u':
+        if row>0:
+            meta['code']=200
+        else:
+            meta['code']=404
+    elif CRUD=='d':
+        if row>0:
+            meta['code']=410
+        else:
+            meta['code']=404
+    else:
+        meta['code']=201
     return data, meta

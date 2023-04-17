@@ -9,7 +9,7 @@ r=APIRouter(prefix='/users',tags=['User'])
 
 @r.get('/{userid}')
 def get_user(
-userid:int=Path(default=None, title='User id',description='Enter a User ID On URL to get user information',gt=0),
+userid:int=Path( title='User id',description='Enter a User ID On URL to get user information',gt=0),
 ):
     res,metadata = table.get_one(userid)
     return json_data(Users.from_list(res),meta=metadata)
@@ -22,7 +22,7 @@ def create_user(user:Users):
 
 
 @r.delete('/delete/{user}')
-def delete_user(user:int=Path(default=None,title='UserID', description='Enter a Userid to delete',gt=0)):
+def delete_user(user:int=Path(title='UserID', description='Enter a Userid to delete',gt=0)):
     res,mdata=table.delete_from_database(user)
     data=mdata.get('msg',f'user having id {user} is deleted.')
     mdata['msg']=data

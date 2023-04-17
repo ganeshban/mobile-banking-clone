@@ -23,7 +23,7 @@ orderby:str=Query(default=None, title='Member Serial Number',description='Enter 
 
 @r.get('/{memsn}')
 def get_member(
-memsn:int=Path(default=None, title='Member Serial Number',description='Enter a members serial number to get members infomartion',gt=0),
+memsn:int=Path(title='Member Serial Number',description='Enter a members serial number to get members infomartion',gt=0),
 ):
     
     mem,metadata = table.get_one(memsn)
