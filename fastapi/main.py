@@ -1,5 +1,5 @@
 
-from fastapi import FastAPI ,Depends, Query
+from fastapi import FastAPI ,Depends
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer
 

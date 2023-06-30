@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobbanking/pages/login.dart';
+import 'package:mobbanking/pages/signup.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       home: const LogInPage(),
       routes: <String, WidgetBuilder>{
         '/login': (BuildContext context) => const LogInPage(),
+        '/signup': (BuildContext context) => const Signup(),
       },
     );
   }
